@@ -1,100 +1,155 @@
 <template>
-   <v-navigation-drawer
-    v-model="drawer"
-    color="teal-darken-1"
+  <v-app-bar app color="#1604c0">
+    <!-- Logo or Application Name -->
+    <v-img
+      src="/13.jpg"
+      alt="Onix Logo"
+      max-width="100"
+      class="mr-4"
+    ></v-img>
+    <v-toolbar-title class="custom-navbar-title">
+      <span class="font-weight-light">Onix-healthcare and Pharmacies</span>
+    </v-toolbar-title>
 
-    dark
-    app
-  >
-    <v-layout column align-center>
-           MENU
-    </v-layout>
-    <v-list flat>
-      <v-list-item
-        v-for="path in paths"
-        :key="path.text"
-        router
-        :to="path.route"
-        active-class="border"
-      >
-        <v-list-item-content class="d-flex align-center">
-          <v-icon>{{ path.icon }}</v-icon>
-          <span class="ml-2">{{ path.text }}</span>
-        </v-list-item-content>
-      </v-list-item>
-    </v-list>
-  </v-navigation-drawer>
+    <v-spacer></v-spacer>
+    <!-- Home button -->
+    <v-btn color="white" outlined @click="Home" router-link to="/"  class="router-link">
+      Home
+    </v-btn>
 
-    <v-toolbar color="primary">
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+    <!-- AboutUs button -->
+    <v-btn color="white" outlined @click="AboutUs" router-link to="/AboutUs"  class="router-link">
+      About Us
+    </v-btn>
 
-      <v-toolbar-title>ONIX-HEALTHCARE</v-toolbar-title>
+    <!-- Locations button -->
+    <v-btn color="white" outlined @click="Loctions" router-link to="/LocationsPage"  class="router-link">
+      Locations
+    </v-btn>
 
-      <v-spacer></v-spacer>
-
-      <v-btn icon="mdi-magnify"></v-btn>
-
-
-      <template v-slot:extension>
-        <v-tabs
-          v-model="tab"
-          align-tabs="title"
-        >
-          <v-tab
-            v-for="item in items"
-            :key="item"
-            :text="item"
-            :value="item"
-          ></v-tab>
-        </v-tabs>
+    <!-- Find a Doctor Button with Dropdown and Arrow -->
+    <v-menu open-on-hover>
+      <template v-slot:activator="{ props }">
+        <v-btn color="white" v-bind="props">
+          <v-icon left>mdi-chevron-down</v-icon>
+          <span>Find a Doctor</span>
+        </v-btn>
       </template>
-    </v-toolbar>
 
-    <v-tabs-window v-model="tab">
-      <v-tabs-window-item
-        v-for="item in items"
-        :key="item"
-        :value="item"
-      >
-        <v-card flat>
-          <v-card-text v-text="text"></v-card-text>
-        </v-card>
-      </v-tabs-window-item>
-    </v-tabs-window>
+      <v-list>
+        <v-list-item v-for="(item, index) in items" :key="index" :value="index">
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
 
+    <!-- Find a Pharmacy Button -->
+    <v-btn color="white" outlined @click="findPharmacy">
+      Find a Pharmacy
+    </v-btn>
 
+    <!--Login Button-->
+    <v-btn color="white" outlined @click="SignUp" router-link to="/SignUp" class="router-link">
+      SignUp
+    </v-btn>
 
+    <!-- Search Icon -->
+    <v-btn icon @click="toggleSearchDialog">
+      <v-icon>mdi-magnify</v-icon>
+    </v-btn>
+  </v-app-bar>
+
+  <!-- Search Dialog -->
+  <v-dialog v-model="searchDialog" persistent max-width="500px">
+    <v-card>
+      <v-card-title>
+        <span class="headline">Search</span>
+      </v-card-title>
+
+      <v-card-text>
+        <!-- Search Query Input -->
+        <v-text-field
+          v-model="searchQuery"
+          label="Search for doctors or pharmacies"
+          append-icon="mdi-magnify"
+          dense
+          outlined
+          @input="searchItems"
+        ></v-text-field>
+
+        <!-- Display search results (mocked for now) -->
+        <v-list v-if="searchResults.length">
+          <v-list-item v-for="(result, index) in searchResults" :key="index">
+            <v-list-item-title>{{ result.name }}</v-list-item-title>
+            <v-list-item-subtitle>{{ result.type }}</v-list-item-subtitle>
+          </v-list-item>
+        </v-list>
+        <v-alert v-if="!searchResults.length" type="info" dense>No results found</v-alert>
+      </v-card-text>
+
+      <v-card-actions>
+        <v-btn text @click="closeSearchDialog">Close</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
-  import { ref } from 'vue'
+import { ref } from 'vue';
 
-  const tab = ref(null)
-  const drawer = ref(true)
+// Mock search results
+const items = [
+  { title: 'General Practitioner' },
+  { title: 'Cardiologist' },
+  { title: 'Dermatologist' },
+  { title: 'Pediatrician' },
+  { title: 'Orthopedic Surgeon' },
+  { title: 'Neurologist' },
+];
 
-  const items = [
-    'Find a Doctor',
-    'Find a Pharmacy',
-    'Symptom Checker',
+// Search dialog visibility state
+const searchDialog = ref(false);
 
-  ];
-  const Items = [
-    'DoctorSignUp',
-    'PatientSignUp',
-    'Login',
-    'Role',
+// Search query
+const searchQuery = ref('');
 
-  ]
-  const paths = ref([
-  {  text: 'HomePage', route: '/' },
-  {  text: 'Login', route: '/LoginPage' },
-  {  text: 'DoctorSignUp', route: '/DoctorSignUp' },
-  {  text: 'PatientSignUp', route: '/PatientSignUp' },
-  {  text: 'Role', route: '/RolePage' },
+// Search results
+const searchResults = ref([]);
 
-])
+// Toggle the search dialog
+function toggleSearchDialog() {
+  searchDialog.value = !searchDialog.value;
+}
 
+// Close the search dialog
+function closeSearchDialog() {
+  searchDialog.value = false;
+  searchQuery.value = ''; // Clear the search query when the dialog is closed
+  searchResults.value = []; // Clear search results
+}
 
-
-
+// Handle the search input
+function searchItems() {
+  if (searchQuery.value.trim() === '') {
+    searchResults.value = [];
+  } else {
+    // Perform the search logic (mocked here as filtering items)
+    searchResults.value = items.filter((item) =>
+      item.title.toLowerCase().includes(searchQuery.value.toLowerCase())
+    );
+  }
+}
 </script>
+
+<style scoped>
+.custom-navbar-title {
+  font-family: "Times New Roman", Times, serif;
+  text-transform: uppercase;
+  font-size: 17px;
+}
+
+/* Optional styling for the search field */
+.v-text-field {
+  margin-top: 10px;
+}
+</style>

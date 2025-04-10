@@ -1,9 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import DoctorSignUp from '../views/DoctorSignUp.vue'
-import PatientSignUp from '../views/PatientSignUp.vue'
-import LoginPage from '../views/LoginPage.vue'
 import RolePage from '../views/RolePage.vue'
+import SignUp from '../views/SignUp.vue'
+import LocationsPage from '../views/LocationsPage.vue'
+import AboutUs from '../views/AboutUs.vue'
+import LoginPage from '../views/LoginPage.vue'
 
 
 const router = createRouter({
@@ -16,25 +17,39 @@ const router = createRouter({
 
     },
     {
-      path: '/DoctorSignUp',
-      name: 'DoctorSignUp',
-      component: DoctorSignUp
+      path: '/AboutUs',
+      name: 'AboutUs',
+      component: AboutUs
+
     },
     {
-      path: '/PatientSignUp',
-      name: 'PatientSignUp',
-      component: PatientSignUp
+      path: '/LocationsPage',
+      name: 'Locations',
+      component: LocationsPage
+
     },
     {
       path: '/LoginPage',
       name: 'Login',
-      component:LoginPage
+      component: LoginPage
+
     },
     {
       path: '/RolePage',
       name: 'Role',
-      component:RolePage
+      component: RolePage
+
+    },
+    {
+      path: '/SignUp',
+      name: 'SignUp',
+      component: SignUp
+
     }
+
+
+
+
 
 
 
